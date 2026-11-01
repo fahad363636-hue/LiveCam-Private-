@@ -12,16 +12,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Fetch approved DEB archive and publish binary only
         env:
-          ARTIFACT_URL: 'https://sdmntprpolandcentral.oaiusercontent.com/files/00000000-ef24-820a-b012-d6ade19b9ae2/raw?se=2026-11-01T13%3A41%3A35Z&sp=r&sv=2026-02-06&sr=b&scid=4fffb054-65fd-5918-ae1d-60d636961498&skoid=5bfb38a5-43fb-4c63-80a1-6ae1e97e2e16&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-01T08%3A24%3A08Z&ske=2026-11-02T08%3A24%3A08Z&sks=b&skv=2026-02-06&sig=I1ShDGDWReEQuIPZNvgkgOGNQljy1QTOlvKuM6wES78%3D'
+          ARTIFACT_URL: 'https://sdmntprdenmarkeast.oaiusercontent.com/files/00000000-576c-8210-ba3c-758c67a2cc74/raw?se=2026-11-01T13%3A51%3A44Z&sp=r&sv=2026-02-06&sr=b&scid=d853df4f-4ebe-5647-b0bf-c99f8689e159&skoid=5bfb38a5-43fb-4c63-80a1-6ae1e97e2e16&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-01T08%3A24%3A06Z&ske=2026-11-02T08%3A24%3A06Z&sks=b&skv=2026-02-06&sig=UBduo11nlhqgQuLjzARGSnGCLfT1QddP64typoaVD4E%3D'
         run: |
           set -euo pipefail
           curl --fail --location --retry 2 --output /tmp/livecam.zip "$ARTIFACT_URL"
           mkdir -p downloads
           unzip -j -o /tmp/livecam.zip '*.deb' -d downloads/
-          test -s downloads/com.mohamedjj.livecamhub_0.3.31~wa-previewfix+license2_iphoneos-arm64.deb
+          test -s downloads/com.mohamedjj.livecamhub_0.3.31~wa-previewfix_iphoneos-arm64.deb
           dpkg-deb -f downloads/*.deb Package Version Architecture
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add downloads/
-          git commit -m "Publish LiveCam 0.3.31 license2 dependency-checked DEB" || true
+          git commit -m "Publish exact stable LiveCam 0.3.31 baseline DEB" || true
           git push
