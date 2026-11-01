@@ -1,0 +1,27 @@
+name: Publish LiveCam binary direct download
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-livecam-binary.yml'
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch approved DEB archive and publish binary only
+        env:
+          ARTIFACT_URL: 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-c0ec-81f4-bd8f-4026c798a56b/raw?se=2026-11-01T13%3A27%3A07Z&sp=r&sv=2026-02-06&sr=b&scid=17e701c0-e99a-5f92-8fc0-7c2b8df89ff8&skoid=5bfb38a5-43fb-4c63-80a1-6ae1e97e2e16&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-31T23%3A47%3A59Z&ske=2026-11-01T23%3A47%3A59Z&sks=b&skv=2026-02-06&sig=tZ5oucUyV3CZtzMiCf6INSBHXorbLeeDWonhvD0F7Fk%3D'
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 2 --output /tmp/livecam.zip "$ARTIFACT_URL"
+          mkdir -p downloads
+          unzip -j -o /tmp/livecam.zip '*.deb' -d downloads/
+          test -s downloads/com.mohamedjj.livecamhub_0.3.31~wa-previewfix+license1_iphoneos-arm64.deb
+          dpkg-deb -f downloads/*.deb Package Version Architecture
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add downloads/
+          git commit -m "Publish LiveCam 0.3.31 licensed DEB" || true
+          git push
